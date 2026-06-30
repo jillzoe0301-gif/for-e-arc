@@ -2,21 +2,49 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { supabase, hasSupabaseConfig } from './lib/supabaseClient.js';
 
 const PAGES = [
-  ['dashboard', '總覽', '/icons/dashboard.png'],
-  ['entry', '單筆 / 批次送件', '/icons/entry.png'],
-  ['payment', '選案繳費', '/icons/payment.png'],
-  ['accounting', '會計對帳', '/icons/accounting.png'],
-  ['accountingSearch', '會計查詢', '/icons/accountingSearch.svg'],
-  ['faxPickup', '傳真與領件', '/icons/faxPickup.png'],
-  ['caseSearch', '案件查詢', '/icons/caseSearch.png'],
-  ['statistics', '統計數據', '/icons/statistics.png'],
-  ['exportData', '匯出資料', '/icons/exportData.svg'],
-  ['agencies', '仲介與扣款帳號', '/icons/agencies.png'],
-  ['immigrationContacts', '移民署服務站', '/icons/immigrationContacts.svg'],
-  ['brigadeContacts', '專勤隊聯絡資訊', '/icons/brigadeContacts.svg'],
-  ['audit', '操作紀錄', '/icons/audit.svg'],
-  ['settings', '系統設定', '/icons/settings.png']
+  ['dashboard', '總覽', 'dashboard'],
+  ['entry', '單筆 / 批次送件', 'entry'],
+  ['payment', '選案繳費', 'payment'],
+  ['accounting', '會計對帳', 'accounting'],
+  ['accountingSearch', '會計查詢', 'accountingSearch'],
+  ['faxPickup', '傳真與領件', 'faxPickup'],
+  ['caseSearch', '案件查詢', 'caseSearch'],
+  ['statistics', '統計數據', 'statistics'],
+  ['exportData', '匯出資料', 'exportData'],
+  ['agencies', '仲介與扣款帳號', 'agencies'],
+  ['immigrationContacts', '移民署服務站', 'immigrationContacts'],
+  ['brigadeContacts', '專勤隊聯絡資訊', 'brigadeContacts'],
+  ['audit', '操作紀錄', 'audit'],
+  ['settings', '系統設定', 'settings']
 ];
+
+function IconBase({ children }) {
+  return (
+    <svg className="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.05" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {children}
+    </svg>
+  );
+}
+
+function MenuIcon({ name }) {
+  const icons = {
+    dashboard: <><path d="M3 11.5 12 4l9 7.5" /><path d="M5.5 10.5V20h13v-9.5" /><path d="M9.5 20v-5h5v5" /></>,
+    entry: <><path d="M9 4h6" /><path d="M10 2h4a2 2 0 0 1 2 2v1H8V4a2 2 0 0 1 2-2Z" /><path d="M7 5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1" /><path d="M12 11v6" /><path d="M9 14h6" /></>,
+    payment: <><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="M3 10h18" /><path d="M7 15h3" /><path d="M15 15h2" /></>,
+    accounting: <><circle cx="12" cy="12" r="9" /><path d="M12 7v10" /><path d="M15 9.5c-.7-.8-1.7-1.2-3-1.2-1.7 0-2.7.8-2.7 2 0 1.4 1.3 1.8 2.7 2.1 1.6.3 3 .7 3 2.1 0 1.2-1.1 2-2.9 2-1.3 0-2.5-.4-3.3-1.3" /></>,
+    accountingSearch: <><path d="M5 4h9l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /><path d="M14 4v5h5" /><circle cx="11" cy="14" r="3" /><path d="m13.4 16.4 2.1 2.1" /></>,
+    faxPickup: <><path d="M7 8V4h10v4" /><rect x="5" y="13" width="14" height="8" rx="1.5" /><path d="M6 8h12a3 3 0 0 1 3 3v5h-2" /><path d="M5 16H3v-5a3 3 0 0 1 3-3" /><path d="M9 17h6" /></>,
+    caseSearch: <><path d="M5 4h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /><path d="M16 4v4h4" /><circle cx="10.5" cy="14.5" r="3" /><path d="m12.8 16.8 2.2 2.2" /></>,
+    statistics: <><path d="M4 20V10" /><path d="M10 20V4" /><path d="M16 20v-7" /><path d="M22 20H2" /><path d="M4 10l6-6 6 9 4-4" /></>,
+    exportData: <><path d="M12 3v11" /><path d="m8 10 4 4 4-4" /><path d="M5 18h14" /><path d="M6 21h12" /></>,
+    agencies: <><path d="M3 21h18" /><path d="M5 21V8l7-5 7 5v13" /><path d="M9 21v-6h6v6" /><path d="M8 10h.01" /><path d="M12 10h.01" /><path d="M16 10h.01" /></>,
+    immigrationContacts: <><path d="M4 21V7l8-4 8 4v14" /><path d="M9 21v-6h6v6" /><path d="M8 9h.01" /><path d="M12 9h.01" /><path d="M16 9h.01" /><path d="M7 12h10" /></>,
+    brigadeContacts: <><path d="M12 3 20 6v5c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-3Z" /><path d="M9 12h6" /><path d="M12 9v6" /></>,
+    audit: <><path d="M9 4h6" /><path d="M10 2h4a2 2 0 0 1 2 2v1H8V4a2 2 0 0 1 2-2Z" /><path d="M7 5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1" /><path d="M8 12h8" /><path d="M8 16h6" /></>,
+    settings: <><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" /><path d="M19.4 15a1.8 1.8 0 0 0 .36 1.98l.06.06a2.1 2.1 0 1 1-2.97 2.97l-.06-.06A1.8 1.8 0 0 0 15 19.4a1.8 1.8 0 0 0-1 .6 1.8 1.8 0 0 0-.5 1.27V21a2.1 2.1 0 0 1-4.2 0v-.09A1.8 1.8 0 0 0 8 19.4a1.8 1.8 0 0 0-1.98.36l-.06.06A2.1 2.1 0 1 1 3 16.85l.06-.06A1.8 1.8 0 0 0 3.6 15a1.8 1.8 0 0 0-.6-1 1.8 1.8 0 0 0-1.27-.5H1.6a2.1 2.1 0 0 1 0-4.2h.09A1.8 1.8 0 0 0 3.6 8a1.8 1.8 0 0 0-.36-1.98l-.06-.06A2.1 2.1 0 1 1 6.15 3l.06.06A1.8 1.8 0 0 0 8 3.6a1.8 1.8 0 0 0 1-.6 1.8 1.8 0 0 0 .5-1.27V1.6a2.1 2.1 0 0 1 4.2 0v.09A1.8 1.8 0 0 0 15 3.6a1.8 1.8 0 0 0 1.98-.36l.06-.06A2.1 2.1 0 1 1 20 6.15l-.06.06A1.8 1.8 0 0 0 19.4 8c.12.38.34.72.64 1 .35.32.8.5 1.27.5h.09a2.1 2.1 0 0 1 0 4.2h-.09A1.8 1.8 0 0 0 19.4 15Z" /></>
+  };
+  return <IconBase>{icons[name] || icons.dashboard}</IconBase>;
+}
 
 const LINKS = [
   ['外籍移工線上申辦系統', 'https://coa.immigration.gov.tw/coa-frontend/foreign-labor'],
@@ -243,7 +271,7 @@ export default function App() {
     <div className="app">
       <aside className="sidebar">
         <div className="logo"><div className="logo-box">ARC</div><div><strong>居留證控管</strong><span>Supabase 正式版 V1</span></div></div>
-        <nav>{PAGES.map(([key, label, icon]) => <button key={key} className={page === key ? 'active' : ''} onClick={() => setPage(key)}><img className="nav-img" src={icon} alt="" />{label}</button>)}</nav>
+        <nav>{PAGES.map(([key, label, icon]) => <button key={key} className={page === key ? 'active' : ''} onClick={() => setPage(key)}><MenuIcon name={icon} /><span>{label}</span></button>)}</nav>
         <div className="side-card"><b>目前使用者</b><br />{deviceLock.handler_name}<br /><small>{deviceLock.device_label || deviceId}</small></div>
       </aside>
       <main className="main">
