@@ -1,35 +1,18 @@
-# ARC 居留證控管系統｜V13 完全重製版
+# ARC 居留證控管系統｜V13 完全重製版 + 操作紀錄 / 資料救回
 
-這份專案是依 `arc_style_preview_v13.html` 重新製作，保留 V13 原始內容、呈現方式、樣式、操作規則與 icon。
+本版本以 Demo V13 的內容、呈現方式、樣式、規則與 icon 為基準重新製作。
 
-## 內容
+新增控管：
 
-- `index.html`：V13 原始單檔版面，包含 CSS、JS、Demo 資料與 icon。
-- `package.json`：讓 GitHub / Vercel 可用 Vite 部署。
+- 新增、修改、刪除、會計確認、領件異動都會留下操作紀錄。
+- 刪除採「軟刪除」，不會真正移除資料。
+- 被刪除的案件、繳費批次、扣款帳號、行政選項可從「操作紀錄 / 資料救回」頁面救回。
+- 系統設定可填寫「目前操作者」，操作紀錄會記錄操作者。
+- 重置 Demo 資料時會保留操作紀錄。
 
-## 注意
+部署方式：
 
-這版為了保證與 V13 完全一致，仍採用 V13 原本的瀏覽器暫存 `localStorage` 資料邏輯。
-確認外觀與流程完全正確後，再進行下一階段 Supabase 資料庫串接。
-
-## 本機測試
-
-```bash
-pnpm install
-pnpm run dev
-```
-
-或使用 npm：
-
-```bash
-npm install
-npm run dev
-```
-
-## Vercel 設定
-
-Framework Preset：Vite
-Build Command：pnpm run build
-Output Directory：dist
-Install Command：pnpm install --frozen-lockfile=false
-Root Directory：./
+1. 解壓縮本專案。
+2. 將資料夾內檔案放到 GitHub 專案第一層。
+3. Vercel 使用 Vite 部署。
+4. Build Command 使用 `npm run build` 或 `pnpm run build`。
