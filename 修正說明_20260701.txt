@@ -1,0 +1,8 @@
+本版修正重點：
+1. 移除重複覆蓋的 function 補丁，保留最新功能版本，避免後面定義覆蓋前面設定。
+2. 修正財務查詢結果區被壓縮：accountingQueryResultArea 改為滿版 grid 欄寬。
+3. 修正系統設定各頁面被壓縮：settingsSearchResultArea 改為滿版 grid 欄寬。
+4. 搜尋欄位改為 inputText / searchKeyword 分離邏輯：中文注音 composition 中不查詢、不重建 input。
+5. 搜尋恢復即時查找：compositionend 或 debounce 後只刷新結果區，不重建整個頁面。
+6. 保留系統設定中的帳號設定、人員選項設定、送件項目設定、手續費設定、仲介公司設定、帳戶設定、傳真/領件設定、提醒事項設定、列印設定。
+7. 已用 node --check 檢查 index.html 內 script 語法。
