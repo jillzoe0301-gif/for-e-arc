@@ -1,21 +1,28 @@
-# ARC V13 正式版｜中文搜尋、完整姓名查找與系統設定修正版
+# ARC V13 正式版｜搜尋中文輸入根因修正版
 
-本版依第二十三項需求修正正式版阻斷問題，重點為全系統搜尋 / 查詢 / 查找 / 篩選中文輸入、完整姓名查找、系統設定項目恢復，以及 `renderUserManagement is not defined` 錯誤。
+本版針對「篩選 / 查詢欄位中文輸入法無法選字」做根因修正。
 
-## 本版修正重點
+## 找到的問題
 
-- 全系統搜尋輸入支援中文注音 composition：組字中不執行搜尋、不重設 input、不重新固定文字。
-- 搜尋輸入狀態與實際搜尋狀態分離：輸入中暫存，compositionend 或 debounce 後才套用查詢。
-- 搜尋結果更新後會保留輸入框焦點與游標，避免輸入中文時跳掉或清空。
-- 搜尋比對統一標準化：trim、移除 tab / 換行 / 不可見字元 / 零寬字元、全形半形統一、大小寫不敏感、連續空白合併。
-- 中文姓名中間空白不影響比對，完整姓名與部分姓名皆可查找。
-- 手動輸入完整名稱與複製貼上完整名稱搜尋結果一致。
-- 修正 `renderUserManagement is not defined`，恢復帳號設定頁面。
-- 系統設定恢復管理員可維護項目：帳號設定、人員選項設定、送件項目設定、手續費設定、仲介公司設定、帳戶設定、傳真 / 領件設定、提醒事項設定、列印設定。
-- 系統設定以可點選切換方式呈現，不使用總覽頁。
-- 管理員可新增、修改、停用、刪除設定資料；非管理員不可修改。
-- 行政仍不可調整帳戶餘額。
-- 系統設定異動會寫入操作紀錄。
+原本搜尋欄位雖然有寫 compositionstart / compositionend，但 oninput 呼叫時只傳入 this，沒有傳入 event，所以程式無法讀到 event.isComposing。
+
+在注音輸入組字期間，input 事件仍可能觸發 debounce 搜尋，接著 render() 會重建整個 app 內容，造成：
+
+- 注音還沒選字就被固定
+- 搜尋欄位被重新掛載
+- 游標消失或失去焦點
+- 手動輸入完整姓名時搜尋值停在半成品
+- 手動輸入完整名稱與複製貼上完整名稱結果不一致
+
+## 本版修正
+
+- 全系統搜尋 oninput / composition 事件改為傳入 event。
+- 使用 event.isComposing 與 inputType=insertCompositionText 判斷中文組字狀態。
+- 組字期間不執行搜尋、不 render、不重建 input。
+- render() 加上防護：只要任何搜尋欄位仍在 composition 中，就暫停整頁重繪，等 compositionend 後再執行。
+- inputText 與實際 searchKeyword 繼續分離。
+- 搜尋比對保留標準化處理：去除前後空白、換行、tab、零寬字元、全形半形統一、英文大小寫不敏感。
+- 完整姓名、部分姓名、複製貼上完整名稱皆可一致查詢。
 
 ## 套用方式
 
@@ -26,15 +33,14 @@
 - package-lock.json
 - README.md
 - 部署步驟.md
-- .env.example
 - supabase/
 
 執行：
 
 ```bash
 git add .
-git commit -m "fix ARC V13 Chinese search and settings management"
+git commit -m "fix ARC V13 search IME composition root cause"
 git push origin main
 ```
 
-本次為前端功能修正，不需要重新執行 Supabase SQL。
+本次為前端搜尋輸入修正，不需要重新執行 Supabase SQL。
