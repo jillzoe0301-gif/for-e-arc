@@ -2,7 +2,9 @@
 -- 執行位置：Supabase SQL Editor
 -- 用途：Email 登入、角色帳號管理、共享資料狀態、跨裝置儲存
 
-create extension if not exists pgcrypto;
+create schema if not exists extensions;
+create extension if not exists pgcrypto with schema extensions;
+set search_path = public, extensions;
 
 create table if not exists public.arc_users (
   id text primary key,
@@ -84,7 +86,7 @@ returns jsonb
 language sql
 stable
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
   select coalesce(jsonb_agg(public.arc_user_json(u) order by u.id),'[]'::jsonb)
   from public.arc_users u
@@ -96,7 +98,7 @@ returns public.arc_users
 language sql
 stable
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
   select u
   from public.arc_sessions s
@@ -112,7 +114,7 @@ create or replace function public.arc_login(p_email text, p_password text)
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_user public.arc_users;
@@ -157,7 +159,7 @@ create or replace function public.arc_get_state(p_token text)
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_user public.arc_users;
@@ -177,7 +179,7 @@ create or replace function public.arc_save_state(p_token text, p_state jsonb)
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_user public.arc_users;
@@ -197,7 +199,7 @@ create or replace function public.arc_list_users(p_token text)
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_user public.arc_users;
@@ -215,7 +217,7 @@ returns public.arc_users
 language sql
 stable
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
   select u.*
   from public.arc_session_user(p_token) u
@@ -227,7 +229,7 @@ create or replace function public.arc_next_user_id()
 returns text
 language sql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
   select 'USR-' || lpad((coalesce(max(nullif(regexp_replace(id,'[^0-9]','','g'),'')::int),0)+1)::text,3,'0')
   from public.arc_users;
@@ -237,7 +239,7 @@ create or replace function public.arc_admin_create_user(p_token text, p_email te
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_admin public.arc_users;
@@ -259,7 +261,7 @@ create or replace function public.arc_admin_update_user(p_token text, p_user_id 
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_admin public.arc_users;
@@ -286,7 +288,7 @@ create or replace function public.arc_admin_set_user_active(p_token text, p_user
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_admin public.arc_users;
@@ -303,7 +305,7 @@ create or replace function public.arc_admin_delete_user(p_token text, p_user_id 
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_admin public.arc_users;
@@ -320,7 +322,7 @@ create or replace function public.arc_logout(p_token text)
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 begin
   delete from public.arc_sessions where token=p_token;

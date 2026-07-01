@@ -101,3 +101,18 @@
 3. 推上 GitHub。
 4. Vercel 自動部署。
 5. 第一次登入後，系統會把 V13 預設資料同步到 Supabase。
+
+
+## 登入修正
+
+若登入時出現：`function crypt(text, text) does not exist`，請到 Supabase SQL Editor 執行：
+
+```text
+supabase/002_fix_pgcrypto_login_and_hide_login_hint.sql
+```
+
+原因是 pgcrypto 的 `crypt` / `gen_salt` 在 Supabase 可能位於 `extensions` schema，正式 RPC 已調整 search_path。
+
+## 登入畫面
+
+登入按鈕下方的預設帳號提示文字已移除。
